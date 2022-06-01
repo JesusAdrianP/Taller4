@@ -27,7 +27,22 @@ object Colecciones {
     (diccionarioPorOcurrencias.get(lOcPal(pal).sorted).toList).head
   }
 
-  def combinaciones(lOcurrencias: Ocurrencias):List[Ocurrencias]={}
+  def combinaciones(lOcurrencias: Ocurrencias):List[Ocurrencias]={
+    val comb = (for {
+      n <- lOcurrencias
+      f <- lOcurrencias
+      j <- 1 to n._2
+      i <- 1 to f._2
+      if n._1 !=  f._1
+    }yield (List():+(n._1,j):+(f._1,i)).sorted).distinct
+
+    val comb2 = (for{
+      x<-lOcurrencias
+      i<- 1 to x._2
+    }yield List():+(x._1,i))
+
+    List.concat(comb,comb2):+List()
+  }
 
   //def complemento(lOc: Ocurrencias, slOc: Ocurrencias): Ocurrencias{}
 
