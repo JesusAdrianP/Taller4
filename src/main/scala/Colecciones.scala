@@ -2,7 +2,8 @@ object Colecciones {
   type Palabra = String
   type Frase = List[String]
   type Ocurrencias = List[(Char,Int)]
-  val diccionario:List[Palabra] = List("moco","como","oomc","cy","los","sol")
+  //val diccionario:List[Palabra] = List("moco","como","oomc","cy","los","sol")
+  val diccionario:List[Palabra] = List("cosas", "como", "yo", "y", "ocasos", "oca", "cayo", "mocosos", "roca", "moco", "sos")
 
 
   def lOcPal(p: Palabra):Ocurrencias = {
@@ -15,7 +16,7 @@ object Colecciones {
 
   def lOcFrase(f:Frase):Ocurrencias = {
     val concatFrase = f reduceLeft ((x,y)=>x+y)
-    lOcPal(concatFrase)
+    lOcPal(concatFrase).filter(_._1 !=' ')
   }
 
 
@@ -24,27 +25,31 @@ object Colecciones {
   }
 
   def anagramasDePalabra(pal: Palabra): List[Palabra]={
-    (diccionarioPorOcurrencias.get(lOcPal(pal).sorted).toList).head
+    diccionarioPorOcurrencias.get(lOcPal(pal).sorted).head
   }
 
-  def combinaciones(lOcurrencias: Ocurrencias):List[Ocurrencias]={
-    val comb = (for {
-      n <- lOcurrencias
-      f <- lOcurrencias
-      j <- 1 to n._2
-      i <- 1 to f._2
-      if n._1 !=  f._1
-    }yield (List():+(n._1,j):+(f._1,i)).sorted).distinct
-
-    val comb2 = (for{
-      x<-lOcurrencias
-      i<- 1 to x._2
-    }yield List():+(x._1,i))
-
-    List.concat(comb,comb2):+List()
+  def combinaciones(lOcurrencias: Ocurrencias):List[Ocurrencias]= lOcurrencias match {
+    case Nil => List(List())
+    case y::ys =>{
+      val combinacion = combinaciones(ys)
+      combinacion++
+        (for {
+          n<- combinacion
+          i<- 1 to y._2
+        }yield (y._1,i)::n)
+    }
   }
 
-  //def complemento(lOc: Ocurrencias, slOc: Ocurrencias): Ocurrencias{}
+  def complemento(lOc: Ocurrencias, slOc: Ocurrencias): Ocurrencias ={
+    if(slOc.isEmpty) lOc
+    else{
+      if(slOc.head._1 == lOc.head._1){
+        if(slOc.head._2==lOc.head._2) complemento(lOc.tail,slOc.tail)
+        else (slOc.head._1,lOc.head._2-slOc.head._2)::complemento(lOc.tail,slOc.tail)
+      }else lOc.head::complemento(lOc.tail,slOc)
+    }
+  }
 
-  //def anagramasDeFrase(frase: Frase): List[Frase]{}
+
+
 }
